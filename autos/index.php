@@ -1,6 +1,7 @@
 <?php 
 require_once "pdo.php";
 session_start();
+$log_des = "log";
 // echo "<pre>";
 // print_r($_SESSION);
 // echo "</pre>";
@@ -13,14 +14,22 @@ if ($_SERVER["REQUEST_METHOD"]=='POST'){
 
     if(count($_POST)!=2){
         echo "Email and Password are required";
+        $salt = 'XuGka$2(&3_';
+        error_log("Login fail ".$_POST['email']." and password inputted is ".hash('sha256', $salt.$_POST['psswd']), 3, $log_des);
+
+
     }
     else{
-        if(!strpos($_POST['email'], '@')){}
+        if(!strpos($_POST['email'], '@')){
+            error_log("Login fail ".$_POST['email']." and password inputted is ".hash('sha256', $salt.$_POST['psswd']).PHP_EOL, 3, $log_des);
+
+        }
         else{
 
             $salt = 'XuGka$2(&3_';
             $email = $_POST['email'];
             $psswd = hash('sha256', $salt.$_POST['psswd']);
+
             // echo $email, $psswd;
             $check = $pdo->prepare("SELECT username FROM identity WHERE username = :username AND psswd = :psswd");
             $check->execute([
@@ -30,19 +39,33 @@ if ($_SERVER["REQUEST_METHOD"]=='POST'){
             $user = $check->fetch(PDO::FETCH_ASSOC);
 
             if (isset($user) && !empty($user)){
-                echo "Welcome back ",$email;
-                // Username already taken
+                # This will mean that user already exists, and we don't need to add him again in the database
+                // echo "Welcome back ",$email;
+                error_log("Returning USER, Login Successful ".$email." and password inputted is ".$psswd.PHP_EOL, 3, $log_des);
+                $_SESSION['username'] = $email;
+                $_SESSION['psswd'] = $psswd;
+                $_SESSION['old_customer'] = True;
+
+                header('Location: auto.php');
+
+
                 }
-            // $sql = "INSERT INTO identity (username, psswd) VALUES (:username, :psswd)";
-            // $exec = $pdo->prepare($sql);
-            // $exec->execute(array(
-            //     ':username'=>$email,
-            //     ':psswd'=>$psswd
-            // ));
+            else{
+            $sql = "INSERT INTO identity (username, psswd) VALUES (:username, :psswd)";
+            $exec = $pdo->prepare($sql);
+            $exec->execute(array(
+                ':username'=>$email,
+                ':psswd'=>$psswd
+            ));
+
+            error_log("Login Successful ".$email." and password inputted is ".$psswd.PHP_EOL, 3, $log_des);
             $_SESSION['username'] = $email;
             $_SESSION['psswd'] = $psswd;
-            // header('Location: auto.php');
+            $_SESSION['old_customer'] = False;
 
+            header('Location: auto.php');
+
+                }
         }
 
     
@@ -111,7 +134,7 @@ if ($_SERVER["REQUEST_METHOD"]=='POST'){
 <form method="post">
     <p>&nbsp; User Name: <input type="text" name="email" size="40", id="nam"></p>
     <p>&nbsp; Password:&nbsp; &nbsp;<input type="password" name="psswd" size="40" id="psswd"></p>
-    <p>&nbsp;<input type="submit" value = "Add New"></p>
+    <p>&nbsp;<input type="submit" value = "Log In"></p>
 </form>
 
 </div>

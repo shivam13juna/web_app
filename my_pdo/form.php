@@ -37,7 +37,7 @@ $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html>
 <head></head>
 <body>
-<table border="1">
+<table border="1" style="table-layout: fixed; width: 100%;">
 <?php
 foreach ( $rows as $row ) {
     echo "<tr><td>";

@@ -15,20 +15,20 @@ if ($_SERVER["REQUEST_METHOD"]=='POST'){
     if(count($_POST)!=2){
         echo "Email and Password are required";
         $salt = 'XuGka$2(&3_';
-        error_log("Login fail ".$_POST['email']." and password inputted is ".hash('sha256', $salt.$_POST['psswd']), 3, $log_des);
+        error_log("Login fail ".$_POST['who']." and password inputted is ".hash('sha256', $salt.$_POST['pass']), 3, $log_des);
 
 
     }
     else{
-        if(!strpos($_POST['email'], '@')){
-            error_log("Login fail ".$_POST['email']." and password inputted is ".hash('sha256', $salt.$_POST['psswd']).PHP_EOL, 3, $log_des);
+        if(!strpos($_POST['who'], '@')){
+            error_log("Login fail ".$_POST['who']." and password inputted is ".hash('sha256', $salt.$_POST['pass']).PHP_EOL, 3, $log_des);
 
         }
         else{
 
             $salt = 'XuGka$2(&3_';
-            $email = $_POST['email'];
-            $psswd = hash('sha256', $salt.$_POST['psswd']);
+            $email = $_POST['who'];
+            $psswd = hash('sha256', $salt.$_POST['pass']);
 
             // echo $email, $psswd;
             $check = $pdo->prepare("SELECT username FROM identity WHERE username = :username AND psswd = :psswd");
@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"]=='POST'){
                 // echo "Welcome back ",$email;
                 error_log("Returning USER, Login Successful ".$email." and password inputted is ".$psswd.PHP_EOL, 3, $log_des);
                 $_SESSION['username'] = $email;
-                $_SESSION['psswd'] = $psswd;
+                $_SESSION['pass'] = $psswd;
                 $_SESSION['old_customer'] = True;
 
                 header('Location: auto.php');
@@ -51,19 +51,8 @@ if ($_SERVER["REQUEST_METHOD"]=='POST'){
 
                 }
             else{
-            $sql = "INSERT INTO identity (username, psswd) VALUES (:username, :psswd)";
-            $exec = $pdo->prepare($sql);
-            $exec->execute(array(
-                ':username'=>$email,
-                ':psswd'=>$psswd
-            ));
+                echo "<p style='color: red;'>Incorrect Password</p>";
 
-            error_log("Login Successful ".$email." and password inputted is ".$psswd.PHP_EOL, 3, $log_des);
-            $_SESSION['username'] = $email;
-            $_SESSION['psswd'] = $psswd;
-            $_SESSION['old_customer'] = False;
-
-            header('Location: auto.php');
 
                 }
         }
@@ -71,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"]=='POST'){
     
         
     }
-    // echo "Checking if @ is in email, ", strpos($_POST['email'], '@');
+    // echo "Checking if @ is in email, ", strpos($_POST['who'], '@');
     // echo count($_POST) == 2 ? '' : 'Email and Password are required';
     // echo "</pre>";
 
@@ -125,16 +114,16 @@ if ($_SERVER["REQUEST_METHOD"]=='POST'){
 <?php
 if ($_SERVER["REQUEST_METHOD"]=='POST'){
     if(count($_POST)==2){
-        if(!strpos($_POST['email'], '@')){
+        if(!strpos($_POST['who'], '@')){
             echo "<p style='color: red;'>Email must have an at-sign (@)</p>";
             }
         }
     }
 ?>
 <form method="post">
-    <p>&nbsp; User Name: <input type="text" name="email" size="40", id="nam"></p>
-    <p>&nbsp; Password:&nbsp; &nbsp;<input type="password" name="psswd" size="40" id="psswd"></p>
-    <p>&nbsp;<input type="submit" value = "Log In"></p>
+    <p>&nbsp; User Name: <input type="text" name="who" size="40", id="nam"></p>
+    <p>&nbsp; Password:&nbsp; &nbsp;<input type="password" name="pass" size="40" id="psswd"></p>
+    <p>&nbsp;<input type="submit" name='Add' value = "Log In"></p>
 </form>
 
 </div>

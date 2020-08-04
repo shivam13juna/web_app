@@ -32,7 +32,7 @@ if (isset($_SESSION['username']))
             
                 }
             else{
-            $make = $_POST['make'];
+            $make = $_POST['Make'];
             $year = $_POST['year'];
             $mil = $_POST['mileage'];
             
@@ -53,7 +53,7 @@ if (isset($_SESSION['username']))
         } // This one is for $_SERVER['REQUEST_METHOD]
     
     echo"<form method='post'>";
-    echo"<p>&nbsp; Make:&nbsp;  <input type='text' name='make' size='40'></p>";
+    echo"<p>&nbsp; Make:&nbsp;  <input type='text' name='Make' size='40'></p>";
     echo"<p>&nbsp; Year:&nbsp; &nbsp;<input type='text' name='year' size='40'></p>";
     echo"<p>Mileage: <input type='text' name='mileage' size='40'></p>";
     echo"<p>&nbsp;<input type='submit' name='submit' value = 'Add New'></p>";

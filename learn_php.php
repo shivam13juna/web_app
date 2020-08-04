@@ -216,5 +216,9 @@ echo $new->get_name()."\n";
 // INSERT INTO users (name,email,password) VALUES ('Chuck','csev@umich.edu','123');
 // INSERT INTO users (name,email,password) VALUES ('Glenn','gg@umich.edu','456');
 
+//COOKIES
 
+if (!isset($_COOKIE['zap'])){
+    setcookie('za', '42', time()+3600);
+}
 ?>
